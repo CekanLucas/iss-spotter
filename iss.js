@@ -30,6 +30,7 @@ const fetchMyIP = function(callback) {
 };
 
 const fetchCoordsByIP = (function(callback) {
+  
   fetchMyIP((error, ip) => {
     if (error) throw error;
     request(`https://ipvigilante.com/${ip}`, (error, response, body) => {
@@ -51,7 +52,37 @@ const fetchCoordsByIP = (function(callback) {
   });
 });
 
+/**
+ * Makes a single API request to retrieve upcoming ISS fly over times the for the given lat/lng coordinates.
+ * Input:
+ *   - An object with keys `latitude` and `longitude`
+ *   - A callback (to pass back an error or the array of resulting data)
+ * Returns (via Callback):
+ *   - An error, if any (nullable)
+ *   - The fly over times as an array of objects (null if error). Example:
+ *     [ { risetime: 134564234, duration: 600 }, ... ]
+ */
+const fetchISSFlyOverTimes = function(coord, callback) {
+
+  const LAT = coord.latitude;
+  const LON = coord.longitude;
+  // console.log(LAT,LON) //works 
+        
+  request(
+    `http://api.open-notify.org/iss-pass.json?lat=${LAT}&lon=${LON}`,
+      (error, res, body) => {
+        console.log(JSON.parse(body).message) //works
+      if (error) throw error;
+      if (JSON.parse(body).message !== 'success'){
+        callback(`There was a error: ${JSON.parse(body).reason} `, null);
+        return;
+      }
+    else {callback(null, JSON.parse(body).response);}
+  });
+}
+
 module.exports = {
   fetchMyIP,
-  fetchCoordsByIP
+  fetchCoordsByIP,
+  fetchISSFlyOverTimes
 };
