@@ -66,20 +66,21 @@ const fetchISSFlyOverTimes = function(coord, callback) {
 
   const LAT = coord.latitude;
   const LON = coord.longitude;
-  // console.log(LAT,LON) //works 
+  // console.log(LAT,LON) //works
         
   request(
     `http://api.open-notify.org/iss-pass.json?lat=${LAT}&lon=${LON}`,
-      (error, res, body) => {
-        console.log(JSON.parse(body).message) //works
+    (error, res, body) => {
+      console.log(JSON.parse(body).message); //works
       if (error) throw error;
-      if (JSON.parse(body).message !== 'success'){
+      if (JSON.parse(body).message !== 'success') {
         callback(`There was a error: ${JSON.parse(body).reason} `, null);
         return;
+      } else {
+        callback(null, JSON.parse(body).response);
       }
-    else {callback(null, JSON.parse(body).response);}
-  });
-}
+    });
+};
 
 module.exports = {
   fetchMyIP,
