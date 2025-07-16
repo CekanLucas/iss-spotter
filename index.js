@@ -25,8 +25,8 @@ const nextISSTimesForMyLocation = () => {
           console.log(data);
           data.forEach(el => {
 
-            const date = new Date(el.risetime);
-            const datetime = date.toDateString();
+            const date = new Date(el.risetime * 1000); // seconds to milliseconds
+            const datetime = date.toLocaleString();
             console.log(
               `Next pass at ${datetime} for ${el.duration} seconds!`
             );

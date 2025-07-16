@@ -4,7 +4,7 @@
  * Returns: Promise of request for ip data, returned as JSON string
  */
 /* -- fetchCoordsByIP --
- * Makes a request to ipvigilante.com using the provided IP address, to get its geographical information (latitude/longitude)
+ * Makes a request to ipvigilante.com (defunct) using the provided IP address, to get its geographical information (latitude/longitude)
  * Input: JSON string containing the IP address
  * Returns: Promise of request for lat/lon
  */
@@ -35,30 +35,34 @@ const fetchMyIP = function() {
 
 const fetchCoordsByIP = function(body) {
   const ip = JSON.parse(body).ip;
-  return request(`https://ipvigilante.com/json/${ip}`);
+  return request(`http://ip-api.com/json/${ip}`);
 };
 
 const fetchISSFlyOverTimes = function(data) {
 
-  const coord = JSON.parse(data).data;
-  const LAT = coord.latitude;
-  const LON = coord.longitude;
+  const coord = JSON.parse(data);
+  const LAT = coord.lat;
+  const LON = coord.lon;
   // console.log(LAT,LON, 'huh') //works
         
-  return request(`http://api.open-notify.org/iss-pass.json?lat=${LAT}&lon=${LON}`);
+  return request(`https://iss-flyover.herokuapp.com/json/?lat=${LAT}&lon=${LON}`);
 };
 
 const printTimes = data => {
   const arr = JSON.parse(data).response;
   arr.forEach(el => {
-    const date = new Date(el.risetime);
-    const datetime = date.toDateString();
+    const date = new Date(el.risetime * 1000);
+    const datetime = date.toLocaleString();
     console.log(
       `Next pass at ${datetime} for ${el.duration} seconds!`
     );
   });
 };
 
+nextISSTimesForMyLocation()
+  .catch((error) => {
+    console.log("It didn't work out: ", error.message);
+  });
 
 module.exports = {
   nextISSTimesForMyLocation

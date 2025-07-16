@@ -33,7 +33,7 @@ const fetchCoordsByIP = (function(callback) {
   
   fetchMyIP((error, ip) => {
     if (error) throw error;
-    request(`https://ipvigilante.com/${ip}`, (error, response, body) => {
+    request(`http://ip-api.com/json/${ip}`, (error, response, body) => {
       if (error) {
         callback('There was a error', null);
         return;
@@ -44,9 +44,9 @@ const fetchCoordsByIP = (function(callback) {
         );
         return;
       }
-      const coord = JSON.parse(body).data;
-      const latitude = coord.latitude;
-      const longitude = coord.longitude;
+      const coord = JSON.parse(body);
+      const latitude = coord.lat;
+      const longitude = coord.lon;
       callback(null, {latitude, longitude});
     });
   });
@@ -69,7 +69,7 @@ const fetchISSFlyOverTimes = function(coord, callback) {
   // console.log(LAT,LON) //works
         
   request(
-    `http://api.open-notify.org/iss-pass.json?lat=${LAT}&lon=${LON}`,
+    `https://iss-flyover.herokuapp.com/json/?lat=${LAT}&lon=${LON}`,
     (error, res, body) => {
       console.log(JSON.parse(body).message); //works
       if (error) throw error;
